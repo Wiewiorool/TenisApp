@@ -8,6 +8,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
@@ -60,6 +61,7 @@ public class Main {
                 System.out.println("Nie udało się znaleźć pola hasła.");
             }
 
+
             // Klikamy przycisk logowania
             WebElement loginButton = driver.findElement(By.xpath("//button[@type='submit' and text()='Zaloguj']"));
             if (loginButton != null) {
@@ -84,18 +86,23 @@ public class Main {
             throw new RuntimeException(e);
         }
 
-        String desiredDate = "Wtorek, 12.11.2024"; // Wybrana data
+        String desiredDate = "Czwartek, 21.11.2024"; // Wybrana data
         String desiredTime = "23:00"; // Wybrana godzina
 
 
-        // Pobieranie wszystkich elementów z datami
-        List<WebElement> dayElements = driver.findElements(By.xpath("//div[contains(@class, 'card-header text-muted')]"));
+        List<WebElement> dayElements = new ArrayList<>();
+        for (int i = 0; i <= 7; i++) {
+            // Pobieranie wszystkich elementów z datami
+            List<WebElement> foundElements = driver.findElements(By.xpath
+                    ("/html/body/app-root/app-layout/div/main/section/app-tabs/div/app-new-reservation/div/div[1]/div/div[2]/div[" + i + "]/div/div")); // wciaz znajduje sie tutaj tylko Sobota, 16.11.2024 ??
+            dayElements.addAll(foundElements);
+        }
         boolean dateFound = false;
         System.out.println(dayElements.listIterator(dayElements.size()));
 
         // Szukamy odpowiedniej daty
         for (WebElement dayElement : dayElements) {
-            WebElement dateElement = dayElement.findElement(By.xpath("//div[contains(@class, 'calendars')]//div[contains(@class, 'card-header text-muted')]"));
+            WebElement dateElement = dayElement.findElement(By.xpath("//div[contains(@class, 'card-header text-muted day-name')]"));
             String dateText = dateElement.getText(); // Pobieramy tekst daty
 
             // Sprawdzamy, czy data się zgadza
