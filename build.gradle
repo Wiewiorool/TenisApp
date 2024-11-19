@@ -1,4 +1,6 @@
 plugins {
+    id 'org.springframework.boot' version '3.3.5'
+    id 'io.spring.dependency-management' version '1.1.6'
     id 'java'
 }
 
@@ -7,28 +9,38 @@ version = '1.0-SNAPSHOT'
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
-
-        repositories {
-            mavenCentral()
-        }
-
-        dependencies {
-            testImplementation platform('org.junit:junit-bom:5.10.0')
-            testImplementation 'org.junit.jupiter:junit-jupiter'
-            testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.1'
-
-            implementation 'org.seleniumhq.selenium:selenium-java:4.26.0'
-            implementation 'org.seleniumhq.selenium:selenium-api:4.26.0'
-            implementation 'org.seleniumhq.selenium:selenium-chrome-driver:4.26.0'
-
-
-            testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.11.3'
-
-            testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-        }
-
-        test {
-            useJUnitPlatform()
-        }
     }
+}
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.1'
+
+    implementation 'org.seleniumhq.selenium:selenium-java:4.26.0'
+    implementation 'org.seleniumhq.selenium:selenium-api:4.26.0'
+    implementation 'org.seleniumhq.selenium:selenium-chrome-driver:4.26.0'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.11.3'
+
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    compileOnly 'org.projectlombok:lombok:1.18.34'
+    annotationProcessor 'org.projectlombok:lombok:1.18.34'
+
+    testCompileOnly 'org.projectlombok:lombok:1.18.34'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
+}
+
+test {
+    useJUnitPlatform()
 }
