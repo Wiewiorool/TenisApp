@@ -1,23 +1,26 @@
 package pl.wiewior;
 
-import lombok.AllArgsConstructor;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
 import java.time.Duration;
 import java.util.List;
 
-@AllArgsConstructor
 @Service
 public class WebPageService {
 
     @Value("${app.username}")
     private String username;
+    @Value("${app.password}")
+    private String password;
 
     public void bookTenis() {
 
@@ -37,20 +40,14 @@ public class WebPageService {
             driver.manage().window().maximize();
 
             try {
-                WebElement closeAd = driver.findElement(By.xpath("//img[@alt='Ad']"));
+                WebElement closeAd = driver.findElement(By.xpath("/html/body/app-root/app-ad-display/ngx-smart-modal/div/div/div/button"));
                 closeAd.click();
             } catch (Exception e) {
                 System.out.println("Nie znaleziono reklamy lub nie udało się jej zamknąć.");
             }
 
-            // Szukamy formularza logowania
-            WebElement form = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                    By.xpath("//form[contains(@class, 'form-validate')]")));
 
-            if (form == null) {
-                System.out.println("Formularz nie został znaleziony");
-                return;
-            }
+            driver.manage().timeouts().implicitlyWait(Duration.ofMillis(5));
 
             // Wypełniamy pola formularza logowania
             WebElement usernameInput = driver.findElement(By.name("accountName"));
@@ -63,14 +60,14 @@ public class WebPageService {
             }
 
             if (passwordInput != null) {
-                passwordInput.sendKeys("x"); // wpisz hasło
+                passwordInput.sendKeys(password); // wpisz hasło
             } else {
                 System.out.println("Nie udało się znaleźć pola hasła.");
             }
 
 
             // Klikamy przycisk logowania
-
+            driver.manage().timeouts().implicitlyWait(Duration.ofMillis(5));
             WebElement loginButton = driver.findElement(By.xpath("//button[@type='submit' and text()='Zaloguj']"));
             if (loginButton != null) {
                 loginButton.click();
@@ -90,21 +87,40 @@ public class WebPageService {
             driver.get("https://app.tenis4u.pl/#/user/dashboard");
             driver.manage().timeouts().implicitlyWait(Duration.ofMillis(5));
             driver.get("https://app.tenis4u.pl/#/court/190");
-            driver.manage().timeouts().implicitlyWait(Duration.ofMillis(5));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
-        String desiredDate = "Poniedziałek, 25.11.2024"; // Wybrana data
-        String desiredTime = "23:00"; // Wybrana godzina
+        String desiredDate = "Czwartek, 28.11.2024"; // Wybrana data
+        String desiredTime = "18:00"; // Wybrana godzina
 
 
-        List<WebElement> dayElements = driver.findElements(By.xpath("//div[contains(@class, 'card-header text-muted day-name')]"));
+        boolean trueDay = false;
+        List<WebElement> dayElements = null;
+        while (trueDay == false) {
+            driver.navigate().refresh();
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            dayElements = driver.findElements(By.xpath("//div[contains(@class, 'card-header text-muted day-name')]"));
+            for (WebElement dayElement : dayElements) {
+                String dateText = dayElement.getText();
+
+                if (dateText.equals(desiredDate)) {
+                    trueDay = true;
+                    System.out.println("Udało się!");
+                } else {
+                    System.out.println("Nie udało się :(");
+                }
+            }
+        }
+
         boolean dateFound = false;
-
-        // Szukamy odpowiedniej daty
         for (WebElement dayElement : dayElements) {
             String dateText = dayElement.getText(); // Pobieramy tekst daty
+
 
             // Sprawdzamy, czy data się zgadza
             if (dateText.equals(desiredDate)) {
@@ -112,17 +128,19 @@ public class WebPageService {
                 dateFound = true;
                 break;
             }
-
         }
+        // Szukamy odpowiedniej daty
         if (!dateFound) {
             System.out.println("Nie znaleziono wybranej daty.");
             return; // Jeśli nie znaleziono daty, kończymy wykonanie
         }
 
-
         // Pobieranie wszystkich elementów z godzinami
         List<WebElement> timeElements = driver.findElements(By.xpath("//div[@class='time']"));
-        WebElement timeForGame = timeElements.get(125);
+        WebElement timeForGame = timeElements.get(120);
+        //
+        //
+        //
         String timeText = timeForGame.getText();
 
         // Sprawdzamy, czy godzina się zgadza i czy element nie jest zablokowany
@@ -133,21 +151,22 @@ public class WebPageService {
         }
 
         // Oczekiwanie na przycisk rezerwacji
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//button[contains(text(), 'Rezerwuj')]")));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//button[contains(text(), 'REZERWUJ')]")));
 
-        WebElement option1 = driver.findElement(By.xpath("/html/body/app-root/app-layout/div/main/section/app-tabs/div/app-new-reservation/div/div[2]/div[1]/app-reservation-summary/ul/li[8]/div/label/input"));
+        WebElement option1 = driver.findElement(By.xpath("/html/body/app-root/app-layout/div/main/section/app-tabs/div/app-new-reservation/div/div[2]/div[1]/app-reservation-summary/ul/li[8]/div/label"));
         option1.click(); //Wcisniecie boxa z akceptacja regulaminu
         if (option1.isSelected()) {
-            System.out.println("Checkbox if Toggled On");
+            System.out.println("Checkbox if Toggled Off");
         } else {
-            System.out.println("Checkbox is Toggled Off");
+            System.out.println("Checkbox is Toggled On");
         }
 
         // Kliknięcie przycisku rezerwacji
-        WebElement reserveButton = driver.findElement(By.xpath("//button[contains(text(), 'Rezerwuj')]"));
+        WebElement reserveButton = driver.findElement(By.xpath("//button[contains(text(), 'REZERWUJ')]"));
         reserveButton.click();
+        WebElement confirmationButton = driver.findElement(By.xpath("/html/body/div/div/div[3]/button[1]"));
+        confirmationButton.click();
         System.out.println("Zarezerwowano kort na " + desiredDate + " o godzinie " + desiredTime);
         driver.quit();
     }
-
 }
