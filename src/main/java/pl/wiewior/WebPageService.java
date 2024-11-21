@@ -23,14 +23,14 @@ public class WebPageService {
     private String password;
 
     public void bookTenis() {
-
+        long start = System.currentTimeMillis();
         System.setProperty("webdriver.chrome.driver", "C:/Users/Wiewior/Downloads/chromedriver.exe");
 
         // Inicjalizacja WebDriver
         WebDriver driver = new ChromeDriver();
 
         // Czekaj, aż strona zostanie w pełni załadowana (10 sekund timeout)
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(4));
 
         try {
             // Otwieranie strony logowania
@@ -67,7 +67,7 @@ public class WebPageService {
 
 
             // Klikamy przycisk logowania
-            driver.manage().timeouts().implicitlyWait(Duration.ofMillis(5));
+            //driver.manage().timeouts().implicitlyWait(Duration.ofMillis(5));
             WebElement loginButton = driver.findElement(By.xpath("//button[@type='submit' and text()='Zaloguj']"));
             if (loginButton != null) {
                 loginButton.click();
@@ -84,15 +84,15 @@ public class WebPageService {
 
         // Przechodzimy do strony rezerwacji
         try {
-            driver.get("https://app.tenis4u.pl/#/user/dashboard");
-            driver.manage().timeouts().implicitlyWait(Duration.ofMillis(5));
+            //driver.get("https://app.tenis4u.pl/#/user/dashboard");
+            //driver.manage().timeouts().implicitlyWait(Duration.ofMillis(5));
             driver.get("https://app.tenis4u.pl/#/court/190");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
         String desiredDate = "Czwartek, 28.11.2024"; // Wybrana data
-        String desiredTime = "18:00"; // Wybrana godzina
+        String desiredTime = "10:00"; // Wybrana godzina
 
 
         boolean trueDay = false;
@@ -117,6 +117,8 @@ public class WebPageService {
             }
         }
 
+        //driver.manage().timeouts().implicitlyWait(Duration.ofMillis(2000));
+        //List<WebElement> dayElements = driver.findElements(By.xpath("//div[contains(@class, 'card-header text-muted day-name')]"));
         boolean dateFound = false;
         for (WebElement dayElement : dayElements) {
             String dateText = dayElement.getText(); // Pobieramy tekst daty
@@ -137,8 +139,8 @@ public class WebPageService {
 
         // Pobieranie wszystkich elementów z godzinami
         List<WebElement> timeElements = driver.findElements(By.xpath("//div[@class='time']"));
-        WebElement timeForGame = timeElements.get(120);
-        //
+        WebElement timeForGame = timeElements.get(112);
+        //Uprościć to wpisywanie !
         //
         //
         String timeText = timeForGame.getText();
@@ -146,12 +148,11 @@ public class WebPageService {
         // Sprawdzamy, czy godzina się zgadza i czy element nie jest zablokowany
         if (timeText.equals(desiredTime) && !timeForGame.getAttribute("class").contains("hour disabled")) {
             System.out.println("Znaleziono odpowiednią godzinę: " + timeText);
-            // Klikamy w godzinę, aby ją wybrać
             timeForGame.click();
         }
-
+        System.out.println(timeForGame.getText());
         // Oczekiwanie na przycisk rezerwacji
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//button[contains(text(), 'REZERWUJ')]")));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//button[contains(text(),'REZERWUJ')]")));
 
         WebElement option1 = driver.findElement(By.xpath("/html/body/app-root/app-layout/div/main/section/app-tabs/div/app-new-reservation/div/div[2]/div[1]/app-reservation-summary/ul/li[8]/div/label"));
         option1.click(); //Wcisniecie boxa z akceptacja regulaminu
@@ -168,5 +169,7 @@ public class WebPageService {
         confirmationButton.click();
         System.out.println("Zarezerwowano kort na " + desiredDate + " o godzinie " + desiredTime);
         driver.quit();
+        long stop = System.currentTimeMillis();
+        System.out.println(stop - start);
     }
 }
