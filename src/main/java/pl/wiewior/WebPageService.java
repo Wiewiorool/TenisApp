@@ -23,7 +23,6 @@ public class WebPageService {
     private String password;
 
     public void bookTenis() {
-        long start = System.currentTimeMillis();
         System.setProperty("webdriver.chrome.driver", "C:/Users/Wiewior/Downloads/chromedriver.exe");
 
         // Inicjalizacja WebDriver
@@ -91,16 +90,17 @@ public class WebPageService {
             throw new RuntimeException(e);
         }
 
-        String desiredDate = "Czwartek, 28.11.2024"; // Wybrana data
-        String desiredTime = "10:00"; // Wybrana godzina
+        String desiredDate = "Wtorek, 03.12.2024"; // Wybrana data
+        String desiredTime = "20:00"; // Wybrana godzina
 
+        long start = System.currentTimeMillis();
 
         boolean trueDay = false;
         List<WebElement> dayElements = null;
         while (trueDay == false) {
             driver.navigate().refresh();
             try {
-                Thread.sleep(5000);
+                Thread.sleep(2000);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -112,14 +112,14 @@ public class WebPageService {
                     trueDay = true;
                     System.out.println("Udało się!");
                 } else {
-                    System.out.println("Nie udało się :(");
+                    //System.out.println("Nie udało się!");
                 }
             }
         }
 
         //driver.manage().timeouts().implicitlyWait(Duration.ofMillis(2000));
         //List<WebElement> dayElements = driver.findElements(By.xpath("//div[contains(@class, 'card-header text-muted day-name')]"));
-        boolean dateFound = false;
+/*        boolean dateFound = false;
         for (WebElement dayElement : dayElements) {
             String dateText = dayElement.getText(); // Pobieramy tekst daty
 
@@ -135,11 +135,11 @@ public class WebPageService {
         if (!dateFound) {
             System.out.println("Nie znaleziono wybranej daty.");
             return; // Jeśli nie znaleziono daty, kończymy wykonanie
-        }
+        }*/
 
         // Pobieranie wszystkich elementów z godzinami
         List<WebElement> timeElements = driver.findElements(By.xpath("//div[@class='time']"));
-        WebElement timeForGame = timeElements.get(112);
+        WebElement timeForGame = timeElements.get(122); //odejmować od 125 !
         //Uprościć to wpisywanie !
         //
         //
@@ -156,11 +156,11 @@ public class WebPageService {
 
         WebElement option1 = driver.findElement(By.xpath("/html/body/app-root/app-layout/div/main/section/app-tabs/div/app-new-reservation/div/div[2]/div[1]/app-reservation-summary/ul/li[8]/div/label"));
         option1.click(); //Wcisniecie boxa z akceptacja regulaminu
-        if (option1.isSelected()) {
+       /* if (option1.isSelected()) {
             System.out.println("Checkbox if Toggled Off");
         } else {
             System.out.println("Checkbox is Toggled On");
-        }
+        }*/
 
         // Kliknięcie przycisku rezerwacji
         WebElement reserveButton = driver.findElement(By.xpath("//button[contains(text(), 'REZERWUJ')]"));
