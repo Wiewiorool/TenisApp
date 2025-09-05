@@ -5,7 +5,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Value;
@@ -90,7 +89,7 @@ public class WebPageService {
             throw new RuntimeException(e);
         }
 
-        String desiredDate = "Wtorek, 03.12.2024"; // Wybrana data
+        String desiredDate = "Czwartek, 05.12.2024"; // Wybrana data
         String desiredTime = "20:00"; // Wybrana godzina
 
         long start = System.currentTimeMillis();
@@ -119,7 +118,7 @@ public class WebPageService {
 
         //driver.manage().timeouts().implicitlyWait(Duration.ofMillis(2000));
         //List<WebElement> dayElements = driver.findElements(By.xpath("//div[contains(@class, 'card-header text-muted day-name')]"));
-/*        boolean dateFound = false;
+ /*      boolean dateFound = false;
         for (WebElement dayElement : dayElements) {
             String dateText = dayElement.getText(); // Pobieramy tekst daty
 
@@ -143,6 +142,7 @@ public class WebPageService {
         //Uprościć to wpisywanie !
         //
         //
+
         String timeText = timeForGame.getText();
 
         // Sprawdzamy, czy godzina się zgadza i czy element nie jest zablokowany
