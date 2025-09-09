@@ -62,8 +62,7 @@ public class WebPageService {
             } else {
                 System.out.println("Nie udało się znaleźć pola hasła.");
             }
-
-
+            
             // Klikamy przycisk logowania
             //driver.manage().timeouts().implicitlyWait(Duration.ofMillis(5));
             WebElement loginButton = driver.findElement(By.xpath("//button[@type='submit' and text()='Zaloguj']"));
