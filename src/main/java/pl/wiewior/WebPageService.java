@@ -43,8 +43,7 @@ public class WebPageService {
             } catch (Exception e) {
                 System.out.println("Nie znaleziono reklamy lub nie udało się jej zamknąć.");
             }
-
-
+            
             driver.manage().timeouts().implicitlyWait(Duration.ofMillis(5));
 
             // Wypełniamy pola formularza logowania
