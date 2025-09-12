@@ -43,7 +43,7 @@ public class WebPageService {
             } catch (Exception e) {
                 System.out.println("Nie znaleziono reklamy lub nie udało się jej zamknąć.");
             }
-            
+
             driver.manage().timeouts().implicitlyWait(Duration.ofMillis(5));
 
             // Wypełniamy pola formularza logowania
@@ -113,7 +113,6 @@ public class WebPageService {
                 }
             }
         }
-
         //driver.manage().timeouts().implicitlyWait(Duration.ofMillis(2000));
         //List<WebElement> dayElements = driver.findElements(By.xpath("//div[contains(@class, 'card-header text-muted day-name')]"));
  /*      boolean dateFound = false;
