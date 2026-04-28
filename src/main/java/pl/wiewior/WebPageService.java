@@ -1,6 +1,5 @@
 package pl.wiewior;
 
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -20,21 +19,19 @@ public class WebPageService {
     private String username;
     @Value("${app.password}")
     private String password;
+    @Value("${path}")
+    private String path;
 
     public void bookTenis() {
-        System.setProperty("webdriver.chrome.driver", "C:/Users/Wiewior/Downloads/chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver", path);
 
-        // Inicjalizacja WebDriver
         WebDriver driver = new ChromeDriver();
 
-        // Czekaj, aż strona zostanie w pełni załadowana (10 sekund timeout)
+        // timeout
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(4));
 
         try {
-            // Otwieranie strony logowania
             driver.get("https://app.tenis4u.pl/#/login");
-
-            // Maksymalizacja okna przeglądarki
             driver.manage().window().maximize();
 
             try {
@@ -46,29 +43,26 @@ public class WebPageService {
 
             driver.manage().timeouts().implicitlyWait(Duration.ofMillis(5));
 
-            // Wypełniamy pola formularza logowania
             WebElement usernameInput = driver.findElement(By.name("accountName"));
             WebElement passwordInput = driver.findElement(By.name("accountPassword"));
 
             if (usernameInput != null) {
-                usernameInput.sendKeys(username); // wpisz nazwę użytkownika
+                usernameInput.sendKeys(username);
             } else {
                 System.out.println("Nie udało się znaleźć pola nazwy użytkownika.");
             }
 
             if (passwordInput != null) {
-                passwordInput.sendKeys(password); // wpisz hasło
+                passwordInput.sendKeys(password);
             } else {
                 System.out.println("Nie udało się znaleźć pola hasła.");
             }
 
-            // Klikamy przycisk logowania
             //driver.manage().timeouts().implicitlyWait(Duration.ofMillis(5));
             WebElement loginButton = driver.findElement(By.xpath("//button[@type='submit' and text()='Zaloguj']"));
             if (loginButton != null) {
                 loginButton.click();
 
-                // Oczekuj na załadowanie strony po zalogowaniu (np. sprawdzenie obecności przycisku rezerwacji kortu)
                 wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[contains(text(), 'Dashboard')]")));
                 System.out.println("Zalogowano pomyślnie.");
             } else {
@@ -78,7 +72,6 @@ public class WebPageService {
             e.printStackTrace();
         }
 
-        // Przechodzimy do strony rezerwacji
         try {
             //driver.get("https://app.tenis4u.pl/#/user/dashboard");
             //driver.manage().timeouts().implicitlyWait(Duration.ofMillis(5));
@@ -87,8 +80,8 @@ public class WebPageService {
             throw new RuntimeException(e);
         }
 
-        String desiredDate = "Czwartek, 05.12.2024"; // Wybrana data
-        String desiredTime = "20:00"; // Wybrana godzina
+        String desiredDate = "Czwartek, 05.12.2024";
+        String desiredTime = "20:00";
 
         long start = System.currentTimeMillis();
 
@@ -117,38 +110,30 @@ public class WebPageService {
         //List<WebElement> dayElements = driver.findElements(By.xpath("//div[contains(@class, 'card-header text-muted day-name')]"));
  /*      boolean dateFound = false;
         for (WebElement dayElement : dayElements) {
-            String dateText = dayElement.getText(); // Pobieramy tekst daty
+            String dateText = dayElement.getText();
 
-
-            // Sprawdzamy, czy data się zgadza
             if (dateText.equals(desiredDate)) {
                 System.out.println("Znaleziono odpowiednią datę: " + dateText);
                 dateFound = true;
                 break;
             }
         }
-        // Szukamy odpowiedniej daty
         if (!dateFound) {
             System.out.println("Nie znaleziono wybranej daty.");
             return; // Jeśli nie znaleziono daty, kończymy wykonanie
         }*/
 
-        // Pobieranie wszystkich elementów z godzinami
         List<WebElement> timeElements = driver.findElements(By.xpath("//div[@class='time']"));
         WebElement timeForGame = timeElements.get(122); //odejmować od 125 !
-        //Uprościć to wpisywanie !
-        //
-        //
+
 
         String timeText = timeForGame.getText();
 
-        // Sprawdzamy, czy godzina się zgadza i czy element nie jest zablokowany
         if (timeText.equals(desiredTime) && !timeForGame.getAttribute("class").contains("hour disabled")) {
             System.out.println("Znaleziono odpowiednią godzinę: " + timeText);
             timeForGame.click();
         }
         System.out.println(timeForGame.getText());
-        // Oczekiwanie na przycisk rezerwacji
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//button[contains(text(),'REZERWUJ')]")));
 
         WebElement option1 = driver.findElement(By.xpath("/html/body/app-root/app-layout/div/main/section/app-tabs/div/app-new-reservation/div/div[2]/div[1]/app-reservation-summary/ul/li[8]/div/label"));
@@ -159,7 +144,6 @@ public class WebPageService {
             System.out.println("Checkbox is Toggled On");
         }*/
 
-        // Kliknięcie przycisku rezerwacji
         WebElement reserveButton = driver.findElement(By.xpath("//button[contains(text(), 'REZERWUJ')]"));
         reserveButton.click();
         WebElement confirmationButton = driver.findElement(By.xpath("/html/body/div/div/div[3]/button[1]"));
